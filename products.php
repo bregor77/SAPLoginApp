@@ -15,7 +15,7 @@ if (isset($_SESSION['user_id']) == false) {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Sap Project - Insecure Version</title>
+  <title>Sap Project - Secure Version</title>
 
   <!-- CSS FILES -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,16 +58,16 @@ if (isset($_SESSION['user_id']) == false) {
             <li class="nav-item">
               <a class="nav-link" href="index.php">Home</a>
             </li>
-
             <li class="nav-item">
               <a class="nav-link active" href="products.php">Products</a>
-            </li>
+            </li>          
           </ul>
 
           <div class="d-none d-lg-block">
             <?php echo "Welcome " . $_SESSION['firstname']; ?>
             <a href="logout.php" class="bi-box-arrow-right custom-icon" title="Logout"></a>
           </div>
+          
         </div>
       </div>
     </nav>
@@ -129,7 +129,6 @@ if (isset($_SESSION['user_id']) == false) {
 
               <div class="product-top d-flex">
                 <span class="product-alert">Discounted Price</span>
-
                 <a href="#" class="bi-heart-fill product-icon ms-auto"></a>
               </div>
 
@@ -138,7 +137,6 @@ if (isset($_SESSION['user_id']) == false) {
                   <h5 class="product-title mb-0">
                     <a href="#" class="product-title-link">Fashion set</a>
                   </h5>
-
                   <p class="product-p">Costume package</p>
                 </div>
 
@@ -217,7 +215,6 @@ if (isset($_SESSION['user_id']) == false) {
                   <h5 class="product-title mb-0">
                     <a href="#" class="product-title-link">Bottle</a>
                   </h5>
-
                   <p class="product-p">Package design</p>
                 </div>
 
@@ -241,7 +238,6 @@ if (isset($_SESSION['user_id']) == false) {
                   <h5 class="product-title mb-0">
                     <a href="#" class="product-title-link">Medicine</a>
                   </h5>
-
                   <p class="product-p">Original design from house</p>
                 </div>
 
@@ -261,8 +257,8 @@ if (isset($_SESSION['user_id']) == false) {
       <div class="row">
 
         <div class="col-lg-3 col-10 me-auto mb-4">
-          <h4 class="text-white mb-3"><a href="index.php">SAP</a> Fashion</h4>
-          <h6 class="text-white mb-3"><a href="index.php">Login App </a>Insecure Version</h6>
+          <h4 class="text-white mb-3"><a href="index.php">SAP</a> Project</h4>
+          <h6 class="text-white mb-3"><a href="index.php">Login App </a>Secure Version</h6>
           <p class="copyright-text text-muted mt-lg-5 mb-4 mb-lg-0">Copyright © 2023 <strong>Mariusz</strong></p>
           <br>
           <p class="copyright-text">Designed for <a href="#" target="_blank">SAP Project</a>

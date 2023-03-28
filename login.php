@@ -3,41 +3,60 @@
 include("include/config.php");
 
 // Get the user's input from a form
-if (isset($_POST['email'])) {
-  $password = $_POST['password'];
-  $email = $_POST['email'];
-  $encrypted_password = hash('md5', $password);
+if (isset($_POST['email'], $_POST['password'])) {
+  $email = test_input($_POST['email']);
+  $password = test_input($_POST['password']);
 
-  $sql = "select * from users where email = '$email' AND password='$encrypted_password'";
+  // prevent SQL injection by using prepared statements
+  $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+  $stmt->bind_param("s", $email);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
-  $result = mysqli_query($conn, $sql) or die("Data Retreival Error");
+  if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $stored_password = $row['password'];
 
-  if (mysqli_num_rows($result) > 0) {
-
-    $row = mysqli_fetch_assoc($result);
-    $_SESSION['user_id'] = $row['id'];
-    $_SESSION['email'] = $row['email'];
-    $_SESSION['firstname'] = $row['firstname'];
-    $_SESSION['surname'] = $row['surname'];
-    echo "<p style='color:green; text-align:center;'>You are successfully logged in</p>";
-    header("Location: index.php");
-  } else {
-    echo "<p style='color:red; text-align:center;'>Invalid Login Credentials</p>";
+    // verify the password using a strong hashing algorithm like bcrypt
+    if (password_verify($password, $stored_password)) {
+      $_SESSION['user_id'] = $row['id'];
+      $_SESSION['email'] = $row['email'];
+      $_SESSION['firstname'] = $row['firstname'];
+      $_SESSION['surname'] = $row['surname'];
+      // successfully login credentials
+      echo "<p style='color:green; text-align:center;'>You are successfully logged in</p>";
+      // redirecting to index page after successfully login
+      header("Location: index.php");
+      exit();
+    }
   }
+
+  // invalid login credentials
+  echo "<p style='color:red; text-align:center;'>Invalid Login Credentials</p>";
 }
-// No Sanitization in this version of the code
+
+// Sanitize the user's input to prevent XSS attacks
+
+function test_input($data)
+{
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+  return $data;
+}
 ?>
 
 
 <!doctype html>
 <html lang="en">
- 
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>SAP Project - Sign In Page</title>
+  
+  <title>Sap Project - Secure Version</title>
 
   <!-- CSS FILES -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,11 +91,8 @@ if (isset($_POST['email'])) {
                 <form role="form" method="post">
 
                   <div class="form-floating mb-4 p-0">
-                    <input type="email" name="email" class="form-control"
+                    <input type="email" name="email" id="email" class="form-control"
                       placeholder="Email address">
-
-                  <!-- <input type="email" name="email" id="email" class="form-control"
-                      placeholder="Email address"> -->
 
                     <!-- <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control"
                       placeholder="Email address" required> -->
@@ -85,9 +101,8 @@ if (isset($_POST['email'])) {
                   </div>
 
                   <div class="form-floating p-0">
-                    <input type="password" name="password"  class="form-control" placeholder="Password">
-
-                    <!-- <input type="password" name="password" id="password" class="form-control" placeholder="Password"> -->
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Password"
+                      required>
 
                     <label for="password">Password</label>
                   </div>
@@ -116,7 +131,7 @@ if (isset($_POST['email'])) {
 
         <div class="col-lg-3 col-10 me-auto mb-4">
           <h4 class="text-white mb-3"><a href="index.php">SAP </a>Project</h4>
-          <h6 class="text-white mb-3"><a href="index.php">Login App </a>Insecure Version</h6>
+          <h6 class="text-white mb-3"><a href="index.php">Login App </a>Secure Version</h6>
           <p class="copyright-text text-muted mt-lg-5 mb-4 mb-lg-0">Copyright © 2023 <strong>Mariusz</strong></p>
           <br>
           <p class="copyright-text">Designed for <a href="#" target="_blank">SAP Project</a></p>
@@ -126,7 +141,7 @@ if (isset($_POST['email'])) {
           <h5 class="text-white mb-3">Sitemap</h5>
 
           <ul class="footer-menu d-flex flex-wrap">
-            <li class="footer-menu-item"><a href="#" class="footer-menu-link">Products</a></li>
+            <li class="footer-menu-item"><a href="#" class="footer-menu-link">Products</a></li>           
           </ul>
         </div>
 
